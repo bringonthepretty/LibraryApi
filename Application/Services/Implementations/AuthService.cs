@@ -13,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services.Implementations;
 
-public class AuthService(IUserRepository userRepository, IConfiguration configuration) : BaseService, IAuthService
+public class AuthService(IUserRepository userRepository, IConfiguration configuration) : IAuthService
 {
     public async Task<bool> Register(RegisterRequestDto registerRequest)
     {

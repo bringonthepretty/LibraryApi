@@ -4,21 +4,14 @@ using Application.Services.Api;
 using Domain.Abstractions;
 using Domain.Entities;
 using Domain.Exceptions;
-using FluentValidation;
 using Mapster;
 
 namespace Application.Services.Implementations;
 
-public class AuthorService(IAuthorRepository authorRepository, IBookService bookService, IValidator<AuthorDto> authorValidator) : BaseService, IAuthorService
+public class AuthorService(IAuthorRepository authorRepository, IBookService bookService) : IAuthorService
 {
     public async Task<AuthorDto> CreateAsync(AuthorDto author)
     {
-        await authorValidator.ValidateAsync(author, options =>
-        {
-            options
-                .ThrowOnFailures()
-                .IncludeRuleSets("NonIdProperties");
-        });
         var authorDbEntity = author.Adapt<Author>();
         return (await authorRepository.CreateAsync(authorDbEntity)).Adapt<AuthorDto>();
     }
@@ -35,23 +28,15 @@ public class AuthorService(IAuthorRepository authorRepository, IBookService book
         return result.Adapt<AuthorDto>();
     }
 
-    public async Task<List<AuthorDto>> GetAllWithPageAndLimitAsync(string page, string limit)
+    public async Task<List<AuthorDto>> GetAllWithPageAndLimitAsync(int page, int limit)
     {
-        ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
+        var offset = (page - 1) * limit;
 
-        var offset = (intPage - 1) * intLimit;
-
-        return (await authorRepository.GetAllWithOffsetAndLimitAsync(offset, intLimit)).Select(author => author.Adapt<AuthorDto>()).ToList();
+        return (await authorRepository.GetAllWithOffsetAndLimitAsync(offset, limit)).Select(author => author.Adapt<AuthorDto>()).ToList();
     }
 
     public async Task<AuthorDto> UpdateAsync(AuthorDto author)
     {
-        await authorValidator.ValidateAsync(author, options =>
-        {
-            options
-                .ThrowOnFailures()
-                .IncludeRuleSets("NonIdProperties", "Id");
-        });
         var dbAuthor = author.Adapt<Author>();
         return (await authorRepository.UpdateAsync(dbAuthor)).Adapt<AuthorDto>();
     }
@@ -67,10 +52,9 @@ public class AuthorService(IAuthorRepository authorRepository, IBookService book
         return await authorRepository.CountAsync();
     }
 
-    public async Task<int> GetAllAuthorsPagesCountAsync(string entriesOnPage)
+    public async Task<int> GetAllAuthorsPagesCountAsync(int entriesOnPage)
     {
-        ValidateLimit(entriesOnPage, out var intEntriesOnPage);
         var count = await GetAllAuthorsCountAsync();
-        return (count + intEntriesOnPage - 1) / intEntriesOnPage;
+        return (count + entriesOnPage - 1) / entriesOnPage;
     }
 }

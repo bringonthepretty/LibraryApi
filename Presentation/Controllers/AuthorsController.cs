@@ -4,12 +4,12 @@ using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Requests;
-using Presentation.Views;
+using Presentation.Validators;
 
 namespace Presentation.Controllers;
 
 [Route("api/[controller]")]
-public class AuthorsController(IAuthorService authorService) : ApiController
+public class AuthorsController(IAuthorService authorService, IPageAndLimitValidator pageAndLimitValidator) : ApiController
 {
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
@@ -20,7 +20,8 @@ public class AuthorsController(IAuthorService authorService) : ApiController
     [HttpGet]
     public async Task<IActionResult> GetAllWithPageAndLimit(string page = "1", string limit = "10")
     {
-        return Ok(await authorService.GetAllWithPageAndLimitAsync(page, limit));
+        pageAndLimitValidator.ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
+        return Ok(await authorService.GetAllWithPageAndLimitAsync(intPage, intLimit));
     }
 
     [HttpPost]
@@ -50,6 +51,7 @@ public class AuthorsController(IAuthorService authorService) : ApiController
     [HttpGet("pagescount")]
     public async Task<IActionResult> GetAllBooksPagesCount(string limit = "10")
     {
-        return Ok(await authorService.GetAllAuthorsPagesCountAsync(limit));
+        pageAndLimitValidator.ValidateLimit(limit, out var intLimit);
+        return Ok(await authorService.GetAllAuthorsPagesCountAsync(intLimit));
     }
 }

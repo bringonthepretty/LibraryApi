@@ -10,16 +10,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Implementations;
 
-public class BookService(IBookRepository bookRepository, IHttpContextAccessor contextAccessor, IValidator<BookDto> bookValidator) : BaseService, IBookService
+public class BookService(IBookRepository bookRepository, IHttpContextAccessor contextAccessor): IBookService
 {
     public async Task<BookDto> CreateAsync(BookDto book)
     {
-        await bookValidator.ValidateAsync(book, options =>
-        {
-            options
-                .ThrowOnFailures()
-                .IncludeRuleSets("NonIdProperties");
-        });
         book.Available = true;
         var bookDbEntity = book.Adapt<Book>();
         return (await bookRepository.CreateAsync(bookDbEntity)).Adapt<BookDto>();
@@ -49,59 +43,44 @@ public class BookService(IBookRepository bookRepository, IHttpContextAccessor co
         return result.Adapt<BookDto>();
     }
 
-    public async Task<List<BookDto>> GetAllWithPageAndLimitAsync(string page, string limit)
+    public async Task<List<BookDto>> GetAllWithPageAndLimitAsync(int page, int limit)
     {
-        ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
+        var offset = (page - 1) * limit;
 
-        var offset = (intPage - 1) * intLimit;
-
-        return (await bookRepository.GetAllWithOffsetAndLimitAsync(offset, intLimit)).Select(book => book.Adapt<BookDto>()).ToList();
+        return (await bookRepository.GetAllWithOffsetAndLimitAsync(offset, limit)).Select(book => book.Adapt<BookDto>()).ToList();
     }
 
-    public async Task<List<BookDto>> GetAllByNameWithPageAndLimitAsync(string name, string page, string limit)
+    public async Task<List<BookDto>> GetAllByNameWithPageAndLimitAsync(string name, int page, int limit)
     {
-        ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
 
-        var offset = (intPage - 1) * intLimit;
+        var offset = (page - 1) * limit;
 
-        return (await bookRepository.GetAllByNamePartWithOffsetAndLimitAsync(name, offset, intLimit)).Select(book => book.Adapt<BookDto>()).ToList();;
+        return (await bookRepository.GetAllByNamePartWithOffsetAndLimitAsync(name, offset, limit)).Select(book => book.Adapt<BookDto>()).ToList();;
     }
 
-    public async Task<List<BookDto>> GetAllByGenreWithPageAndLimitAsync(string genre, string page, string limit)
+    public async Task<List<BookDto>> GetAllByGenreWithPageAndLimitAsync(string genre, int page, int limit)
     {
-        ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
+        var offset = (page - 1) * limit;
 
-        var offset = (intPage - 1) * intLimit;
-
-        return (await bookRepository.GetAllByGenreWithOffsetAndLimitAsync(genre, offset, intLimit)).Select(book => book.Adapt<BookDto>()).ToList();;
+        return (await bookRepository.GetAllByGenreWithOffsetAndLimitAsync(genre, offset, limit)).Select(book => book.Adapt<BookDto>()).ToList();;
     }
 
-    public async Task<List<BookDto>> GetAllByAuthorWithPageAndLimitAsync(Guid authorId, string page, string limit)
+    public async Task<List<BookDto>> GetAllByAuthorWithPageAndLimitAsync(Guid authorId, int page, int limit)
     {
-        ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
+        var offset = (page - 1) * limit;
 
-        var offset = (intPage - 1) * intLimit;
-
-        return (await bookRepository.GetAllByAuthorIdWithOffsetAndLimitAsync(authorId, offset, intLimit)).Select(book => book.Adapt<BookDto>()).ToList();;
+        return (await bookRepository.GetAllByAuthorIdWithOffsetAndLimitAsync(authorId, offset, limit)).Select(book => book.Adapt<BookDto>()).ToList();;
     }
 
-    public async Task<List<BookDto>> GetAllByUserWithPageAndLimitAsync(Guid userId, string page, string limit)
+    public async Task<List<BookDto>> GetAllByUserWithPageAndLimitAsync(Guid userId, int page, int limit)
     {
-        ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
-
-        var offset = (intPage - 1) * intLimit;
+        var offset = (page - 1) * limit;
         
-        return (await bookRepository.GetAllByUserIdWithOffsetAndLimitAsync(userId, offset, intLimit)).Select(book => book.Adapt<BookDto>()).ToList();;
+        return (await bookRepository.GetAllByUserIdWithOffsetAndLimitAsync(userId, offset, limit)).Select(book => book.Adapt<BookDto>()).ToList();;
     }
 
     public async Task<BookDto> UpdateAsync(BookDto book)
     {
-        await bookValidator.ValidateAsync(book, options =>
-        {
-            options
-                .ThrowOnFailures()
-                .IncludeRuleSets("NonIdProperties", "Id");
-        });
         var bookDbEntity = book.Adapt<Book>();
         return (await bookRepository.UpdateAsync(bookDbEntity)).Adapt<BookDto>();
     }
@@ -179,11 +158,10 @@ public class BookService(IBookRepository bookRepository, IHttpContextAccessor co
         return await bookRepository.CountAllAsync();
     }
 
-    public async Task<int> GetAllBooksPagesCountAsync(string entriesOnPage)
+    public async Task<int> GetAllBooksPagesCountAsync(int entriesOnPage)
     {
-        ValidateLimit(entriesOnPage, out var intEntriesOnPage);
         var count = await GetAllBooksCountAsync();
-        return (count + intEntriesOnPage - 1) / intEntriesOnPage;
+        return (count + entriesOnPage - 1) / entriesOnPage;
     }
 
     public async Task<int> GetAllBooksWithNameCountAsync(string name)
@@ -191,11 +169,10 @@ public class BookService(IBookRepository bookRepository, IHttpContextAccessor co
         return await bookRepository.CountAllWithNamePartAsync(name);
     }
 
-    public async Task<int> GetAllBooksWithNamePagesCountAsync(string name, string entriesOnPage)
+    public async Task<int> GetAllBooksWithNamePagesCountAsync(string name, int entriesOnPage)
     {
-        ValidateLimit(entriesOnPage, out var intEntriesOnPage);
         var count = await bookRepository.CountAllWithNamePartAsync(name);
-        return (count + intEntriesOnPage - 1) / intEntriesOnPage;
+        return (count + entriesOnPage - 1) / entriesOnPage;
     }
 
     public async Task<int> GetAllBooksWithGenreCountAsync(string genre)
@@ -203,11 +180,10 @@ public class BookService(IBookRepository bookRepository, IHttpContextAccessor co
         return await bookRepository.CountAllWithGenreAsync(genre);
     }
 
-    public async Task<int> GetAllBooksWithGenrePagesCountAsync(string genre, string entriesOnPage)
+    public async Task<int> GetAllBooksWithGenrePagesCountAsync(string genre, int entriesOnPage)
     {
-        ValidateLimit(entriesOnPage, out var intEntriesOnPage);
         var count = await bookRepository.CountAllWithGenreAsync(genre);
-        return (count + intEntriesOnPage - 1) / intEntriesOnPage;
+        return (count + entriesOnPage - 1) / entriesOnPage;
     }
 
     public async Task<int> GetAllBooksWithAuthorIdCountAsync(Guid authorId)
@@ -215,11 +191,10 @@ public class BookService(IBookRepository bookRepository, IHttpContextAccessor co
         return await bookRepository.CountAllWithAuthorIdAsync(authorId);
     }
 
-    public async Task<int> GetAllBooksWithAuthorIdPagesCountAsync(Guid authorId, string entriesOnPage)
+    public async Task<int> GetAllBooksWithAuthorIdPagesCountAsync(Guid authorId, int entriesOnPage)
     {
-        ValidateLimit(entriesOnPage, out var intEntriesOnPage);
         var count = await bookRepository.CountAllWithAuthorIdAsync(authorId);
-        return (count + intEntriesOnPage - 1) / intEntriesOnPage;
+        return (count + entriesOnPage - 1) / entriesOnPage;
     }
 
     public async Task<int> GetAllBooksWithUserIdCountAsync(Guid userId)
@@ -227,10 +202,9 @@ public class BookService(IBookRepository bookRepository, IHttpContextAccessor co
         return await bookRepository.CountAllWithUserIdAsync(userId);
     }
 
-    public async Task<int> GetAllBooksWithUserIdPagesCountAsync(Guid userId, string entriesOnPage)
+    public async Task<int> GetAllBooksWithUserIdPagesCountAsync(Guid userId, int entriesOnPage)
     {
-        ValidateLimit(entriesOnPage, out var intEntriesOnPage);
         var count = await bookRepository.CountAllWithUserIdAsync(userId);
-        return (count + intEntriesOnPage - 1) / intEntriesOnPage;
+        return (count + entriesOnPage - 1) / entriesOnPage;
     }
 }

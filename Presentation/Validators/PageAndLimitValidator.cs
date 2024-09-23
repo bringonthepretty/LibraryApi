@@ -1,11 +1,11 @@
 using System.Net;
 using Domain.Exceptions;
 
-namespace Application.Services.Implementations;
+namespace Presentation.Validators;
 
-public abstract class BaseService
+public class PageAndLimitValidator: IPageAndLimitValidator
 {
-    protected void ValidatePageAndLimit(string page, string limit, out int intPage, out int intLimit)
+    public void ValidatePageAndLimit(string page, string limit, out int intPage, out int intLimit)
     {
         var exceptionMessagesList = new List<string>();
         
@@ -25,7 +25,7 @@ public abstract class BaseService
         }
     }
 
-    protected void ValidateLimit(string limit, out int intLimit)
+    public void ValidateLimit(string limit, out int intLimit)
     {
         var exceptionMessagesList = new List<string>();
         

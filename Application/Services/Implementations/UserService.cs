@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Implementations;
 
-public class UserService(IUserRepository userRepository, IBookService bookService, IHttpContextAccessor contextAccessor) : BaseService, IUserService
+public class UserService(IUserRepository userRepository, IBookService bookService, IHttpContextAccessor contextAccessor) : IUserService
 {
 
     public async Task<UserDto> GetByIdAsync(Guid id)
@@ -36,7 +36,7 @@ public class UserService(IUserRepository userRepository, IBookService bookServic
         return result.Adapt<UserDto>();
     }
 
-    public async Task<List<BookDto>> GetUsersBooks(string page, string limit)
+    public async Task<List<BookDto>> GetUsersBooks(int page, int limit)
     {
         var currentUser = contextAccessor.HttpContext?.User;
         var idClaim = currentUser?.Claims.FirstOrDefault(claim => claim.Type == "Id");
@@ -49,7 +49,7 @@ public class UserService(IUserRepository userRepository, IBookService bookServic
         return await bookService.GetAllByUserWithPageAndLimitAsync(Guid.Parse(idClaim.Value), page, limit);
     }
 
-    public async Task<int> GetAllBooksWithUserIdPagesCountAsync(string limit)
+    public async Task<int> GetAllBooksWithUserIdPagesCountAsync(int limit)
     {
         var currentUser = contextAccessor.HttpContext?.User;
         var idClaim = currentUser?.Claims.FirstOrDefault(claim => claim.Type == "Id");

@@ -3,9 +3,9 @@ using Domain.Exceptions;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace Application.Validators;
+namespace Presentation.Validators;
 
-public abstract class LibraryValidator<T> : AbstractValidator<T>
+public abstract class BaseValidator<T> : AbstractValidator<T>
 {
     protected override void RaiseValidationException(ValidationContext<T> context, ValidationResult validationResult)
     {

@@ -1,8 +1,6 @@
 using System.Text;
-using Application.Dtos;
 using Application.Services.Api;
 using Application.Services.Implementations;
-using Application.Validators;
 using Domain.Abstractions;
 using FluentValidation;
 using Infrastructure;
@@ -10,6 +8,10 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Presentation.ExceptionHandlers;
+using Presentation.Requests;
+using Presentation.Validators;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using RegisterRequestValidator = Presentation.Validators.RegisterRequestValidator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,8 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -45,9 +49,10 @@ builder.Services.AddAuthorizationBuilder()
     builder.Services.AddScoped<IAuthorService, AuthorService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
 
-    builder.Services.AddScoped<IValidator<BookDto>, BookValidator>();
-    builder.Services.AddScoped<IValidator<AuthorDto>, AuthorValidator>();
-    builder.Services.AddScoped<IValidator<UserDto>, UserValidator>();
+    builder.Services.AddScoped<IValidator<CreateOrUpdateAuthorRequest>, CreateOrUpdateAuthorRequestValidator>();
+    builder.Services.AddScoped<IValidator<CreateOrUpdateBookRequest>, CreateOrUpdateBookRequestValidator>();
+    builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
+    builder.Services.AddScoped<IPageAndLimitValidator, PageAndLimitValidator>();
 
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IBookRepository, BookRepository>();

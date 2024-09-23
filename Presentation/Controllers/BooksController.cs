@@ -4,12 +4,12 @@ using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Requests;
-using Presentation.Views;
+using Presentation.Validators;
 
 namespace Presentation.Controllers;
 
 [Route("api/[controller]")]
-public class BooksController(IBookService bookService) : ApiController
+public class BooksController(IBookService bookService, IPageAndLimitValidator pageAndLimitValidator) : ApiController
 {
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
@@ -26,7 +26,8 @@ public class BooksController(IBookService bookService) : ApiController
     [HttpGet]
     public async Task<IActionResult> GetAllWithPageAndLimit(string page = "1", string limit = "10")
     {
-        return Ok(await bookService.GetAllWithPageAndLimitAsync(page, limit));
+        pageAndLimitValidator.ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
+        return Ok(await bookService.GetAllWithPageAndLimitAsync(intPage, intLimit));
     }
 
     [HttpPost]
@@ -73,42 +74,49 @@ public class BooksController(IBookService bookService) : ApiController
     [HttpGet("byName")]
     public async Task<IActionResult> GetAllByNameWithPageAndLimit(string name, string page = "1", string limit = "10")
     {
-        return Ok(await bookService.GetAllByNameWithPageAndLimitAsync(name, page, limit));
+        pageAndLimitValidator.ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
+        return Ok(await bookService.GetAllByNameWithPageAndLimitAsync(name, intPage, intLimit));
     }
     
     [HttpGet("byGenre")]
     public async Task<IActionResult> GetAllByGenreWithPageAndLimit(string genre, string page = "1", string limit = "10")
     {
-        return Ok(await bookService.GetAllByGenreWithPageAndLimitAsync(genre, page, limit));
+        pageAndLimitValidator.ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
+        return Ok(await bookService.GetAllByGenreWithPageAndLimitAsync(genre, intPage, intLimit));
     }
     
     [HttpGet("byAuthor")]
     public async Task<IActionResult> GetAllByAuthorWithPageAndLimit(Guid authorId, string page = "1", string limit = "10")
     {
-        return Ok(await bookService.GetAllByAuthorWithPageAndLimitAsync(authorId, page, limit));
+        pageAndLimitValidator.ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
+        return Ok(await bookService.GetAllByAuthorWithPageAndLimitAsync(authorId, intPage, intLimit));
     }
     
     [HttpGet("pagescount")]
     public async Task<IActionResult> GetAllBooksPagesCount(string limit = "10")
     {
-        return Ok(await bookService.GetAllBooksPagesCountAsync(limit));
+        pageAndLimitValidator.ValidateLimit(limit, out var intLimit);
+        return Ok(await bookService.GetAllBooksPagesCountAsync(intLimit));
     }
 
     [HttpGet("pagescountbyname")]
     public async Task<IActionResult> GetAllBooksWithNamePagesCount(string name, string limit = "10")
     {
-        return Ok(await bookService.GetAllBooksWithNamePagesCountAsync(name, limit));
+        pageAndLimitValidator.ValidateLimit(limit, out var intLimit);
+        return Ok(await bookService.GetAllBooksWithNamePagesCountAsync(name, intLimit));
     }
     
     [HttpGet("pagescountbygenre")]
     public async Task<IActionResult> GetAllBooksWithGenrePagesCount(string genre, string limit = "10")
     {
-        return Ok(await bookService.GetAllBooksWithGenrePagesCountAsync(genre, limit));
+        pageAndLimitValidator.ValidateLimit(limit, out var intLimit);
+        return Ok(await bookService.GetAllBooksWithGenrePagesCountAsync(genre, intLimit));
     }
     
     [HttpGet("pagescountbyauthor")]
     public async Task<IActionResult> GetAllBooksWithAuthorPagesCount(Guid id, string limit = "10")
     {
-        return Ok(await bookService.GetAllBooksWithAuthorIdPagesCountAsync(id, limit));
+        pageAndLimitValidator.ValidateLimit(limit, out var intLimit);
+        return Ok(await bookService.GetAllBooksWithAuthorIdPagesCountAsync(id, intLimit));
     }
 }
