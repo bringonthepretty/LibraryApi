@@ -4,10 +4,10 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Application.Dtos;
+using Application.Exceptions;
 using Application.Services.Api;
 using Domain.Abstractions;
 using Domain.Entities;
-using Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 

@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
 using System.Text;
+using Application.Exceptions;
 using Application.Services.Implementations;
 using Domain.Abstractions;
 using Domain.Entities;
-using Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Moq;
 

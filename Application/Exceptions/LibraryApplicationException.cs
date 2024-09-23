@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Domain.Exceptions;
+namespace Application.Exceptions;
 
 public class LibraryApplicationException : Exception
 {

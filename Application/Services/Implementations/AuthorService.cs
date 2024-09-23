@@ -1,9 +1,9 @@
 using System.Net;
 using Application.Dtos;
+using Application.Exceptions;
 using Application.Services.Api;
 using Domain.Abstractions;
 using Domain.Entities;
-using Domain.Exceptions;
 using Mapster;
 
 namespace Application.Services.Implementations;
