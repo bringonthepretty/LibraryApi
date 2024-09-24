@@ -1,4 +1,5 @@
 using System.Text;
+using Application.Configs;
 using Application.Services.Api;
 using Application.Services.Implementations;
 using Domain.Abstractions;
@@ -12,7 +13,6 @@ using Presentation.ExceptionHandlers;
 using Presentation.Requests;
 using Presentation.Validators;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
-using RegisterRequestValidator = Presentation.Validators.RegisterRequestValidator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +25,8 @@ builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.RegisterMapsterConfig();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

@@ -9,7 +9,7 @@ public class Book : Entity
     public bool Available { get; set; }
     public Guid? BorrowedByUserId { get; set; }
     public DateTime? BorrowTime { get; set; }
-    public string Image { get; set; }
+    public byte[] Image { get; set; }
     public Guid AuthorId { get; set; }
     public Author Author { get; set; }
 }
