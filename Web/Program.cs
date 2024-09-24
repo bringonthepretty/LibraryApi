@@ -5,6 +5,7 @@ using Domain.Abstractions;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.Repositories;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Presentation.ExceptionHandlers;
@@ -57,6 +58,8 @@ builder.Services.AddAuthorizationBuilder()
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IBookRepository, BookRepository>();
     builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+    
+    builder.Services.AddScoped<ISecurity, Security>();
 }
 
 builder.Services.AddHttpContextAccessor();

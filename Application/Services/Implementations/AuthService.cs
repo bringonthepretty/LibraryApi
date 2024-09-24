@@ -13,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services.Implementations;
 
-public class AuthService(IUserRepository userRepository, IConfiguration configuration) : IAuthService
+public class AuthService(IUserRepository userRepository, IConfiguration configuration, ISecurity securityProvider) : IAuthService
 {
     public async Task<bool> Register(RegisterRequestDto registerRequest)
     {
@@ -51,13 +51,13 @@ public class AuthService(IUserRepository userRepository, IConfiguration configur
             throw new LibraryApplicationException(HttpStatusCode.Unauthorized, "Wrong login or password");
         }
         
-        if (!CheckIsPasswordCorrect(dbUser, password))
+        if (!securityProvider.CheckIsPasswordCorrect(dbUser, password))
         {
             throw new LibraryApplicationException(HttpStatusCode.Unauthorized, "Wrong login or password");
         }
 
-        var encryptedAccessToken = GenerateEncryptedAccessToken(dbUser);
-        var refreshToken = GenerateRefreshToken();
+        var encryptedAccessToken = securityProvider.GenerateEncryptedAccessToken(dbUser, configuration["JwtSecurityKey"]!);
+        var refreshToken = securityProvider.GenerateRefreshToken();
         
         await userRepository.UpdateRefreshTokenByIdAsync(dbUser.Id, refreshToken);
         
@@ -78,47 +78,11 @@ public class AuthService(IUserRepository userRepository, IConfiguration configur
             throw new LibraryApplicationException(HttpStatusCode.Unauthorized, "Refresh token is invalid");
         }
         
-        var encryptedAccessToken = GenerateEncryptedAccessToken(dbUser);
-        var refreshToken = GenerateRefreshToken();
+        var encryptedAccessToken = securityProvider.GenerateEncryptedAccessToken(dbUser, configuration["JwtSecurityKey"]!);
+        var refreshToken = securityProvider.GenerateRefreshToken();
         
         await userRepository.UpdateRefreshTokenByIdAsync(dbUser.Id, refreshToken);
         
         return new TokenDto(encryptedAccessToken, refreshToken, dbUser.Id, dbUser.Role);
-    }
-
-    private string GenerateEncryptedAccessToken(User user)
-    {
-        var claims = new List<Claim>
-        {
-            new("Id", user.Id.ToString()),
-            new(ClaimTypes.Name, user.Login),
-            new(ClaimTypes.Role, user.Role)
-        };
-        
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]!));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-        var accessToken = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: credentials);
-
-         return new JwtSecurityTokenHandler().WriteToken(accessToken);
-    }
-
-    private string GenerateRefreshToken()
-    {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-    }
-
-    private bool CheckIsPasswordCorrect(User user, string password)
-    {
-        byte[] actualHash;
-        using (var hmac = new HMACSHA512(user.PasswordKey))
-        {
-            actualHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        }
-
-        return user.PasswordHash.SequenceEqual(actualHash);
     }
 }

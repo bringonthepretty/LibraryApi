@@ -16,6 +16,7 @@ public class RegisterTests
     {
         var userRepositoryMock = new Mock<IUserRepository>();
         var configurationMock = new Mock<IConfiguration>();
+        var securityMock = new Mock<ISecurity>();
         var registerRequestDto = new RegisterRequestDto()
         {
             Login = "login",
@@ -25,7 +26,7 @@ public class RegisterTests
         User? user = null;
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync("")).ReturnsAsync(user);
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object);
+        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
         var result = await authService.Register(registerRequestDto);
         Assert.True(result);
 
@@ -36,6 +37,7 @@ public class RegisterTests
     {
         var userRepositoryMock = new Mock<IUserRepository>();
         var configurationMock = new Mock<IConfiguration>();
+        var securityMock = new Mock<ISecurity>();
         var registerRequestDto = new RegisterRequestDto()
         {
             Login = "login",
@@ -45,7 +47,7 @@ public class RegisterTests
         var user = new User();
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync(registerRequestDto.Login)).ReturnsAsync(user);
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object);
+        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
         await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.Register(registerRequestDto));
     }
 }

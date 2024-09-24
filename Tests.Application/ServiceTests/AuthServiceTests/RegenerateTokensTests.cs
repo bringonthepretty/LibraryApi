@@ -16,6 +16,7 @@ public class RegenerateTokensTests
     {
         var userRepositoryMock = new Mock<IUserRepository>();
         var configurationMock = new Mock<IConfiguration>();
+        var securityMock = new Mock<ISecurity>();
         
         var login = "login";
         var password = "password";
@@ -44,7 +45,7 @@ public class RegenerateTokensTests
         userRepositoryMock.Setup(repository => repository.GetByRefreshTokenAsync(oldRefreshToken)).ReturnsAsync(user);
         configurationMock.Setup(configuration => configuration["JwtSecurityKey"]).Returns("jwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityley");
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object);
+        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
         
         var result = await authService.RegenerateAccessAndRefreshTokens(oldRefreshToken);
         Assert.Equal(id, result.Id);
@@ -55,6 +56,7 @@ public class RegenerateTokensTests
     {
         var userRepositoryMock = new Mock<IUserRepository>();
         var configurationMock = new Mock<IConfiguration>();
+        var securityMock = new Mock<ISecurity>();
         var oldRefreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         
         User? user = null;
@@ -62,7 +64,7 @@ public class RegenerateTokensTests
         userRepositoryMock.Setup(repository => repository.GetByRefreshTokenAsync(oldRefreshToken)).ReturnsAsync(user);
         configurationMock.Setup(configuration => configuration["JwtSecurityKey"]).Returns("jwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityley");
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object);
+        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
         
         await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.RegenerateAccessAndRefreshTokens(oldRefreshToken));
     }
@@ -72,9 +74,10 @@ public class RegenerateTokensTests
     {
         var userRepositoryMock = new Mock<IUserRepository>();
         var configurationMock = new Mock<IConfiguration>();
+        var securityMock = new Mock<ISecurity>();
         string? oldRefreshToken = null;
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object);
+        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
         
         await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.RegenerateAccessAndRefreshTokens(oldRefreshToken));
     }
