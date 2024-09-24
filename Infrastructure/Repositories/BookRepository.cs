@@ -75,28 +75,23 @@ public class BookRepository(LibraryDbContext dbContext) : IBookRepository
 
     public async Task<Book> UpdateAsync(Book book)
     {
-        var dbBook = await GetByIdAsync(book.Id);
-
-        if (dbBook is null)
-        {
-            return await CreateAsync(book);
-        }
-        
-        dbContext.Books.Entry(dbBook).CurrentValues.SetValues(book);
+        dbContext.Books.Update(book);
         await dbContext.SaveChangesAsync();
         return book;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        var result = await dbContext.Books.Where(book => book.Id == id).ExecuteDeleteAsync();
-        return result > 0;
+        dbContext.Remove(new Book { Id = id });
+        await dbContext.SaveChangesAsync();
+        return true;
     }
 
     public async Task<int> DeleteByAuthorIdAsync(Guid authorId)
     {
-        var result = await dbContext.Books.Where(book => book.AuthorId == authorId).ExecuteDeleteAsync();
-        return result;
+        dbContext.Books.RemoveRange(dbContext.Books.Where(book => book.AuthorId == authorId));
+        await dbContext.SaveChangesAsync();
+        return 0;
     }
 
     public async Task<int> CountAllAsync()

@@ -35,14 +35,7 @@ public class UserRepository(LibraryDbContext dbContext) : IUserRepository
 
     public async Task<User> UpdateAsync(User user)
     {
-        var dbUser = await GetByIdAsync(user.Id);
-
-        if (dbUser is null)
-        {
-            return await CreateAsync(user);
-        }
-
-        dbContext.Users.Entry(dbUser).CurrentValues.SetValues(user);
+        dbContext.Users.Update(user);
         await dbContext.SaveChangesAsync();
         return user;
     }
@@ -50,12 +43,6 @@ public class UserRepository(LibraryDbContext dbContext) : IUserRepository
     public async Task<bool> UpdateRefreshTokenByIdAsync(Guid id, string refreshToken)
     {
         var user = await GetByIdAsync(id);
-
-        if (user is null)
-        {
-            return false;
-        }
-
         user.RefreshToken = refreshToken;
         await dbContext.SaveChangesAsync();
         return true;
@@ -63,7 +50,8 @@ public class UserRepository(LibraryDbContext dbContext) : IUserRepository
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        var result = await dbContext.Users.Where(user => user.Id == id).ExecuteDeleteAsync();
-        return result > 0;
+        dbContext.Users.Remove(new User { Id = id });
+        await dbContext.SaveChangesAsync();
+        return true;
     }
 }

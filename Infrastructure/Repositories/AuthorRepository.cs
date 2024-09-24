@@ -30,22 +30,16 @@ public class AuthorRepository(LibraryDbContext dbContext) : IAuthorRepository
 
     public async Task<Author> UpdateAsync(Author author)
     {
-        var dbAuthor = await GetByIdAsync(author.Id);
-
-        if (dbAuthor is null)
-        {
-            return await CreateAsync(author);
-        }
-        
-        dbContext.Authors.Entry(dbAuthor).CurrentValues.SetValues(author);
+        dbContext.Authors.Update(author);
         await dbContext.SaveChangesAsync();
         return author;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        var result = await dbContext.Authors.Where(author => author.Id == id).ExecuteDeleteAsync();
-        return result > 0;
+        dbContext.Authors.Remove(new Author { Id = id });
+        await dbContext.SaveChangesAsync();
+        return true;
     }
 
     public async Task<int> CountAsync()
