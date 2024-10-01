@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Application.Exceptions;
-using Application.Services.Implementations;
+using Application.UseCases.UserUseCases;
 using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
@@ -41,8 +41,8 @@ public class LoginTests
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync(login)).ReturnsAsync(user);
         configurationMock.Setup(configuration => configuration["JwtSecurityKey"]).Returns("jwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityley");
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
-        var result = await authService.Login(login, password);
+        var authService = new LoginUserUseCase(userRepositoryMock.Object, securityMock.Object, configurationMock.Object);
+        var result = await authService.InvokeAsync(login, password);
         Assert.Equal(id, result.Id);
     }
     
@@ -60,8 +60,8 @@ public class LoginTests
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync(login)).ReturnsAsync(user);
         configurationMock.Setup(configuration => configuration["JwtSecurityKey"]).Returns("jwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityley");
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
-        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.Login(login, password));
+        var authService = new LoginUserUseCase(userRepositoryMock.Object, securityMock.Object, configurationMock.Object);
+        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(login, password));
     }
     
     [Fact]
@@ -94,7 +94,7 @@ public class LoginTests
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync(login)).ReturnsAsync(user);
         configurationMock.Setup(configuration => configuration["JwtSecurityKey"]).Returns("jwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityley");
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
-        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.Login(login, password + "asdasd"));
+        var authService = new LoginUserUseCase(userRepositoryMock.Object, securityMock.Object, configurationMock.Object);
+        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(login, password + "asdasd"));
     }
 }

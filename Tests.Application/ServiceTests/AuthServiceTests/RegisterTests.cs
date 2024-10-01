@@ -1,6 +1,6 @@
 using Application.Dtos;
 using Application.Exceptions;
-using Application.Services.Implementations;
+using Application.UseCases.UserUseCases;
 using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
@@ -26,8 +26,8 @@ public class RegisterTests
         User? user = null;
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync("")).ReturnsAsync(user);
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
-        var result = await authService.Register(registerRequestDto);
+        var authService = new RegisterUserUseCase(userRepositoryMock.Object, securityMock.Object);
+        var result = await authService.InvokeAsync(registerRequestDto);
         Assert.True(result);
 
     }
@@ -47,7 +47,7 @@ public class RegisterTests
         var user = new User();
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync(registerRequestDto.Login)).ReturnsAsync(user);
 
-        var authService = new AuthService(userRepositoryMock.Object, configurationMock.Object, securityMock.Object);
-        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.Register(registerRequestDto));
+        var authService = new RegisterUserUseCase(userRepositoryMock.Object, securityMock.Object);
+        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(registerRequestDto));
     }
 }

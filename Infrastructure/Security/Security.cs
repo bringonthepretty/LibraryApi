@@ -10,6 +10,7 @@ namespace Infrastructure.Security;
 
 public class Security : ISecurity
 {
+    
     public string GenerateEncryptedAccessToken(User user, string securityKey)
     {
         var claims = new List<Claim>
@@ -44,5 +45,13 @@ public class Security : ISecurity
         }
 
         return user.PasswordHash.SequenceEqual(actualHash);
+    }
+
+    public KeyValuePair<byte[], byte[]> GeneratePasswordKeyAndHashFromString(string passwordString)
+    {
+        using var hmac = new HMACSHA512();
+        var key  = hmac.Key;
+        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(passwordString));
+        return new KeyValuePair<byte[], byte[]>(key, hash);
     }
 }

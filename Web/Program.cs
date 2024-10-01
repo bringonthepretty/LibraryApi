@@ -1,7 +1,5 @@
 using System.Text;
 using Application.Configs;
-using Application.Services.Api;
-using Application.Services.Implementations;
 using Domain.Abstractions;
 using FluentValidation;
 using Infrastructure;
@@ -13,6 +11,7 @@ using Presentation.ExceptionHandlers;
 using Presentation.Requests;
 using Presentation.Validators;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,11 +46,6 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Admin", policy => policy.RequireRole("admin"));
 
 {
-    builder.Services.AddScoped<IUserService, UserService>();
-    builder.Services.AddScoped<IBookService, BookService>();
-    builder.Services.AddScoped<IAuthorService, AuthorService>();
-    builder.Services.AddScoped<IAuthService, AuthService>();
-
     builder.Services.AddScoped<IValidator<CreateOrUpdateAuthorRequest>, CreateOrUpdateAuthorRequestValidator>();
     builder.Services.AddScoped<IValidator<CreateOrUpdateBookRequest>, CreateOrUpdateBookRequestValidator>();
     builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
@@ -60,8 +54,11 @@ builder.Services.AddAuthorizationBuilder()
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IBookRepository, BookRepository>();
     builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-    
     builder.Services.AddScoped<ISecurity, Security>();
+    
+    builder.Services.AddScopedFromNamespace("Application.UseCases.BookUseCases");
+    builder.Services.AddScopedFromNamespace("Application.UseCases.AuthorUseCases");
+    builder.Services.AddScopedFromNamespace("Application.UseCases.UserUseCases");
 }
 
 builder.Services.AddHttpContextAccessor();
