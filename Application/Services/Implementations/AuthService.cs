@@ -38,6 +38,7 @@ public class AuthService(IUserRepository userRepository, IConfiguration configur
         }
 
         await userRepository.CreateAsync(user);
+        await userRepository.SaveChangesAsync();
         
         return true;
     }
@@ -60,6 +61,7 @@ public class AuthService(IUserRepository userRepository, IConfiguration configur
         var refreshToken = securityProvider.GenerateRefreshToken();
         
         await userRepository.UpdateRefreshTokenByIdAsync(dbUser.Id, refreshToken);
+        await userRepository.SaveChangesAsync();
         
         return new TokenDto(encryptedAccessToken, refreshToken, dbUser.Id, dbUser.Role);
     }
@@ -82,6 +84,7 @@ public class AuthService(IUserRepository userRepository, IConfiguration configur
         var refreshToken = securityProvider.GenerateRefreshToken();
         
         await userRepository.UpdateRefreshTokenByIdAsync(dbUser.Id, refreshToken);
+        await userRepository.SaveChangesAsync();
         
         return new TokenDto(encryptedAccessToken, refreshToken, dbUser.Id, dbUser.Role);
     }

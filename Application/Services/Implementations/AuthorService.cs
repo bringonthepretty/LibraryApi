@@ -13,7 +13,9 @@ public class AuthorService(IAuthorRepository authorRepository, IBookService book
     public async Task<AuthorDto> CreateAsync(AuthorDto author)
     {
         var authorDbEntity = author.Adapt<Author>();
-        return (await authorRepository.CreateAsync(authorDbEntity)).Adapt<AuthorDto>();
+        var createdAuthor = await authorRepository.CreateAsync(authorDbEntity);
+        await authorRepository.SaveChangesAsync();
+        return createdAuthor.Adapt<AuthorDto>();
     }
 
     public async Task<AuthorDto> GetByIdAsync(Guid id)
@@ -38,13 +40,17 @@ public class AuthorService(IAuthorRepository authorRepository, IBookService book
     public async Task<AuthorDto> UpdateAsync(AuthorDto author)
     {
         var dbAuthor = author.Adapt<Author>();
-        return (await authorRepository.UpdateAsync(dbAuthor)).Adapt<AuthorDto>();
+        var updatedAuthor = await authorRepository.UpdateAsync(dbAuthor);
+        await authorRepository.SaveChangesAsync();
+        return updatedAuthor.Adapt<AuthorDto>();
     }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
         await bookService.DeleteByAuthorIdAsync(id);
-        return await authorRepository.DeleteAsync(id);
+        var result = await authorRepository.DeleteAsync(id);
+        await authorRepository.SaveChangesAsync();
+        return result;
     }
 
     public async Task<int> GetAllAuthorsCountAsync()

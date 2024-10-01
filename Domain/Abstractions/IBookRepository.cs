@@ -2,7 +2,7 @@ using Domain.Entities;
 
 namespace Domain.Abstractions;
 
-public interface IBookRepository
+public interface IBookRepository: IUnitOfWork
 {
     public Task<Book> CreateAsync(Book book);
     public Task<Book?> GetByIdAsync(Guid id);

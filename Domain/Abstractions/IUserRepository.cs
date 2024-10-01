@@ -2,7 +2,7 @@ using Domain.Entities;
 
 namespace Domain.Abstractions;
 
-public interface IUserRepository
+public interface IUserRepository: IUnitOfWork
 {
     public Task<User> CreateAsync(User user);
     public Task<User?> GetByIdAsync(Guid id);

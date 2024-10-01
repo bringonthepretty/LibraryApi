@@ -9,8 +9,7 @@ public class BookRepository(LibraryDbContext dbContext) : IBookRepository
     public async Task<Book> CreateAsync(Book book)
     {
         var result = dbContext.Books.Add(book);
-        await dbContext.SaveChangesAsync();
-        return (await GetByIdAsync(result.Entity.Id))!;
+        return result.Entity;
     }
 
     public async Task<Book?> GetByIdAsync(Guid id)
@@ -76,21 +75,18 @@ public class BookRepository(LibraryDbContext dbContext) : IBookRepository
     public async Task<Book> UpdateAsync(Book book)
     {
         dbContext.Books.Update(book);
-        await dbContext.SaveChangesAsync();
         return book;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
         dbContext.Remove(new Book { Id = id });
-        await dbContext.SaveChangesAsync();
         return true;
     }
 
     public async Task<int> DeleteByAuthorIdAsync(Guid authorId)
     {
         dbContext.Books.RemoveRange(dbContext.Books.Where(book => book.AuthorId == authorId));
-        await dbContext.SaveChangesAsync();
         return 0;
     }
 
@@ -117,5 +113,10 @@ public class BookRepository(LibraryDbContext dbContext) : IBookRepository
     public async Task<int> CountAllWithGenreAsync(string genre)
     {
         return await dbContext.Books.Where(book => book.Genre == genre).CountAsync();
+    }
+    
+    public async Task SaveChangesAsync()
+    {
+        await dbContext.SaveChangesAsync();
     }
 }

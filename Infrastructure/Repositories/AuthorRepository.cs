@@ -9,7 +9,6 @@ public class AuthorRepository(LibraryDbContext dbContext) : IAuthorRepository
     public async Task<Author> CreateAsync(Author author)
     {
         var result = dbContext.Authors.Add(author);
-        await dbContext.SaveChangesAsync();
         return result.Entity;
     }
 
@@ -31,19 +30,22 @@ public class AuthorRepository(LibraryDbContext dbContext) : IAuthorRepository
     public async Task<Author> UpdateAsync(Author author)
     {
         dbContext.Authors.Update(author);
-        await dbContext.SaveChangesAsync();
         return author;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
         dbContext.Authors.Remove(new Author { Id = id });
-        await dbContext.SaveChangesAsync();
         return true;
     }
 
     public async Task<int> CountAsync()
     {
         return await dbContext.Authors.CountAsync();
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await dbContext.SaveChangesAsync();
     }
 }

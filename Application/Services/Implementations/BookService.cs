@@ -16,7 +16,9 @@ public class BookService(IBookRepository bookRepository, IHttpContextAccessor co
     {
         book.Available = true;
         var bookDbEntity = book.Adapt<Book>();
-        return (await bookRepository.CreateAsync(bookDbEntity)).Adapt<BookDto>();
+        var createdBook = await bookRepository.CreateAsync(bookDbEntity);
+        await bookRepository.SaveChangesAsync();
+        return createdBook.Adapt<BookDto>();
     }
 
     public async Task<BookDto> GetByIdAsync(Guid id)
@@ -82,17 +84,23 @@ public class BookService(IBookRepository bookRepository, IHttpContextAccessor co
     public async Task<BookDto> UpdateAsync(BookDto book)
     {
         var bookDbEntity = book.Adapt<Book>();
-        return (await bookRepository.UpdateAsync(bookDbEntity)).Adapt<BookDto>();
+        var updatedBook = await bookRepository.UpdateAsync(bookDbEntity);
+        await bookRepository.SaveChangesAsync();
+        return updatedBook.Adapt<BookDto>();
     }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        return await bookRepository.DeleteAsync(id);
+        var result = await bookRepository.DeleteAsync(id);
+        await bookRepository.SaveChangesAsync();
+        return result;
     }
 
     public async Task<int> DeleteByAuthorIdAsync(Guid authorId)
     {
-        return await bookRepository.DeleteByAuthorIdAsync(authorId);
+        var result = await bookRepository.DeleteByAuthorIdAsync(authorId);
+        await bookRepository.SaveChangesAsync();
+        return result;
     }
     
     
