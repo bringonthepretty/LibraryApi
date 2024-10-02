@@ -1,9 +1,11 @@
 using System.Net;
+using Application.DependencyInjectionExtensions;
 using Application.Exceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.BookUseCases;
 
+[Service]
 public class BorrowBookUseCase(IHttpContextAccessor contextAccessor, UpdateBookUseCase updateBookUseCase, GetBookByIdUseCase getBookByIdUseCase)
 {
     public async Task<bool> InvokeAsync(Guid bookId)

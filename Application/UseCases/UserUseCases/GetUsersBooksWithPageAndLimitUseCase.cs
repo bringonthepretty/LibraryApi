@@ -1,4 +1,5 @@
 using System.Net;
+using Application.DependencyInjectionExtensions;
 using Application.Dtos;
 using Application.Exceptions;
 using Application.UseCases.BookUseCases;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.UserUseCases;
 
+[Service]
 public class GetUsersBooksWithPageAndLimitUseCase(IHttpContextAccessor contextAccessor, GetAllBooksByUserWithPageAndLimitUseCase getAllBooksByUserWithPageAndLimitUseCase)
 {
     public async Task<List<BookDto>> InvokeAsync(int page, int limit)

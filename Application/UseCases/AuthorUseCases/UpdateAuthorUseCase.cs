@@ -1,3 +1,4 @@
+using Application.DependencyInjectionExtensions;
 using Application.Dtos;
 using Domain.Abstractions;
 using Domain.Entities;
@@ -5,6 +6,8 @@ using Mapster;
 
 namespace Application.UseCases.AuthorUseCases;
 
+
+[Service]
 public class UpdateAuthorUseCase(IAuthorRepository authorRepository)
 {
     public async Task<AuthorDto> InvokeAsync(AuthorDto author)

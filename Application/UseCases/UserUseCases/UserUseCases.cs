@@ -1,5 +1,8 @@
+using Application.DependencyInjectionExtensions;
+
 namespace Application.UseCases.UserUseCases;
 
+[Service]
 public class UserUseCases(GetUserByIdUseCase getUserByIdUseCase, GetUserByLoginUseCase getUserByLoginUseCase, GetUsersBooksPagesCountUseCase getUsersBooksPagesCountUseCase, GetUsersBooksWithPageAndLimitUseCase getUsersBooksWithPageAndLimitUseCase, LoginUserUseCase loginUserUseCase, RegenerateUserAccessAndRefreshTokensUseCase regenerateUserAccessAndRefreshTokensUseCase, RegisterUserUseCase registerUserUseCase)
 {
     public GetUserByIdUseCase GetUserByIdUseCase { get; set; } = getUserByIdUseCase;

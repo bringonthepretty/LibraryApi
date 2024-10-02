@@ -1,4 +1,5 @@
 using System.Net;
+using Application.DependencyInjectionExtensions;
 using Application.Dtos;
 using Application.Exceptions;
 using Domain.Abstractions;
@@ -6,7 +7,8 @@ using Mapster;
 
 namespace Application.UseCases.BookUseCases;
 
-public class GetBookByISBNUseCase(IBookRepository bookRepository)
+[Service]
+public class GetBookByIsbnUseCase(IBookRepository bookRepository)
 {
     public async Task<BookDto> InvokeAsync(string isbn)
     {

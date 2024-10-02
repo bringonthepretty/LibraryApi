@@ -1,8 +1,10 @@
+using Application.DependencyInjectionExtensions;
 using Application.UseCases.BookUseCases;
 using Domain.Abstractions;
 
 namespace Application.UseCases.AuthorUseCases;
 
+[Service]
 public class DeleteAuthorUseCase(IAuthorRepository authorRepository, DeleteBookByAuthorIdUseCase deleteBookByAuthorIdUseCase)
 {
     public async Task<bool> InvokeAsync(Guid id)

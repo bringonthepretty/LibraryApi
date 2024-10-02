@@ -2,12 +2,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Application.DependencyInjectionExtensions;
 using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Security;
 
+[Service()]
 public class Security : ISecurity
 {
     

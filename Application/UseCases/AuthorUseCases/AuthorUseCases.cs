@@ -1,5 +1,8 @@
+using Application.DependencyInjectionExtensions;
+
 namespace Application.UseCases.AuthorUseCases;
 
+[Service]
 public class AuthorUseCases(CreateAuthorUseCase createAuthorUseCase, DeleteAuthorUseCase deleteAuthorUseCase, GetAllAuthorsCountUseCase getAllAuthorsCountUseCase, GetAllAuthorsPagesCountUseCase getAllAuthorsPagesCountUseCase, GetAllAuthorsWithPageAndLimitUseCase getAllAuthorsWithPageAndLimitUseCase, GetAuthorByIdUseCase getAuthorByIdUseCase, UpdateAuthorUseCase updateAuthorUseCase)
 {
     public CreateAuthorUseCase CreateAuthorUseCase { get; set; } = createAuthorUseCase;

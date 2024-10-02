@@ -1,9 +1,11 @@
+using Application.DependencyInjectionExtensions;
 using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
+[Service]
 public class AuthorRepository(LibraryDbContext dbContext) : IAuthorRepository
 {
     public async Task<Author> CreateAsync(Author author)

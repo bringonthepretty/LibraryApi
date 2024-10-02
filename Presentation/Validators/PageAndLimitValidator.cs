@@ -1,8 +1,10 @@
 using System.Net;
+using Application.DependencyInjectionExtensions;
 using Application.Exceptions;
 
 namespace Presentation.Validators;
 
+[Service]
 public class PageAndLimitValidator: IPageAndLimitValidator
 {
     public void ValidatePageAndLimit(string page, string limit, out int intPage, out int intLimit)

@@ -1,10 +1,12 @@
 using System.Net;
+using Application.DependencyInjectionExtensions;
 using Application.Exceptions;
 using Application.UseCases.BookUseCases;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.UserUseCases;
 
+[Service]
 public class GetUsersBooksPagesCountUseCase(IHttpContextAccessor contextAccessor, GetAllBooksWithUserIdPagesCountUseCase getAllBooksWithUserIdPagesCountUseCase)
 {
     public async Task<int> InvokeAsync(int limit)

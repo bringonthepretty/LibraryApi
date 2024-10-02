@@ -1,8 +1,10 @@
+using Application.DependencyInjectionExtensions;
 using FluentValidation;
 using Presentation.Requests;
 
 namespace Presentation.Validators;
 
+[Service]
 public class CreateOrUpdateBookRequestValidator: BaseValidator<CreateOrUpdateBookRequest>
 {
     public CreateOrUpdateBookRequestValidator()

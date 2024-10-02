@@ -1,7 +1,9 @@
+using Application.DependencyInjectionExtensions;
 using Domain.Abstractions;
 
 namespace Application.UseCases.BookUseCases;
 
+[Service]
 public class GetAllBooksWithNamePagesCountUseCase(IBookRepository bookRepository)
 {
     public async Task<int> InvokeAsync(string name, int entriesOnPage)

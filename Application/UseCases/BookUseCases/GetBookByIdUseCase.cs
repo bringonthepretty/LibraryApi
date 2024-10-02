@@ -1,4 +1,5 @@
 using System.Net;
+using Application.DependencyInjectionExtensions;
 using Application.Dtos;
 using Application.Exceptions;
 using Domain.Abstractions;
@@ -6,6 +7,7 @@ using Mapster;
 
 namespace Application.UseCases.BookUseCases;
 
+[Service]
 public class GetBookByIdUseCase(IBookRepository bookRepository)
 {
     public async Task<BookDto> InvokeAsync(Guid id)

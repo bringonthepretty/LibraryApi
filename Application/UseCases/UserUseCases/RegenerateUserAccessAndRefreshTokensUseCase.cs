@@ -1,4 +1,5 @@
 using System.Net;
+using Application.DependencyInjectionExtensions;
 using Application.Dtos;
 using Application.Exceptions;
 using Domain.Abstractions;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Application.UseCases.UserUseCases;
 
+[Service]
 public class RegenerateUserAccessAndRefreshTokensUseCase(IUserRepository userRepository, ISecurity security, IConfiguration configuration)
 {
     public async Task<TokenDto> InvokeAsync(string? oldRefreshToken)

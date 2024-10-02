@@ -1,9 +1,11 @@
-﻿using Domain.Abstractions;
+﻿using Application.DependencyInjectionExtensions;
+using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
+[Service]
 public class UserRepository(LibraryDbContext dbContext) : IUserRepository
 {
     public async Task<User> CreateAsync(User user)

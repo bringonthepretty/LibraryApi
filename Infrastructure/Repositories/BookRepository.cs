@@ -1,9 +1,11 @@
+using Application.DependencyInjectionExtensions;
 using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
+[Service]
 public class BookRepository(LibraryDbContext dbContext) : IBookRepository
 {
     public async Task<Book> CreateAsync(Book book)
