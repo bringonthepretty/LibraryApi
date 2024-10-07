@@ -9,7 +9,7 @@ public abstract class BaseValidator<T> : AbstractValidator<T>
 {
     protected override void RaiseValidationException(ValidationContext<T> context, ValidationResult validationResult)
     {
-        throw new LibraryApplicationException(HttpStatusCode.UnprocessableContent, 
+        throw new LibraryApplicationException(ExceptionCode.ImpossibleData, 
             validationResult.Errors.Select(error => error.ErrorMessage).ToList());
     } 
 }

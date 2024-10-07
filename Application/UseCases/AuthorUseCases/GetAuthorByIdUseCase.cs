@@ -16,7 +16,7 @@ public class GetAuthorByIdUseCase(IAuthorRepository authorRepository)
 
         if (result is null)
         {
-            throw new LibraryApplicationException(HttpStatusCode.NotFound, "There is no author with given id");
+            throw new LibraryApplicationException( "There is no author with given id");
         }
 
         return result.Adapt<AuthorDto>();

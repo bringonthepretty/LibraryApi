@@ -14,14 +14,14 @@ public class RegenerateUserAccessAndRefreshTokensUseCase(IUserRepository userRep
     {
         if (oldRefreshToken is null)
         {
-            throw new LibraryApplicationException(HttpStatusCode.Unauthorized, "Refresh token is invalid");
+            throw new LibraryApplicationException(ExceptionCode.SecurityError, "Refresh token is invalid");
         }
         
         var dbUser = await userRepository.GetByRefreshTokenAsync(oldRefreshToken);
         
         if (dbUser is null)
         {
-            throw new LibraryApplicationException(HttpStatusCode.Unauthorized, "Refresh token is invalid");
+            throw new LibraryApplicationException(ExceptionCode.SecurityError, "Refresh token is invalid");
         }
         
         var encryptedAccessToken = security.GenerateEncryptedAccessToken(dbUser, configuration["JwtSecurityKey"]!);

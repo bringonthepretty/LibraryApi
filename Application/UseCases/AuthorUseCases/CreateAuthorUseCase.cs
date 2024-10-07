@@ -12,7 +12,7 @@ public class CreateAuthorUseCase(IAuthorRepository authorRepository)
     public async Task<AuthorDto> InvokeAsync(AuthorDto author)
     {
         var authorDbEntity = author.Adapt<Author>();
-        var createdAuthor = await authorRepository.CreateAsync(authorDbEntity);
+        var createdAuthor = authorRepository.Create(authorDbEntity);
         await authorRepository.SaveChangesAsync();
         return createdAuthor.Adapt<AuthorDto>();
     }

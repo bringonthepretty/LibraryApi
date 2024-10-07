@@ -1,16 +1,22 @@
 using Application.DependencyInjectionExtensions;
-using Application.UseCases.BookUseCases;
 using Domain.Abstractions;
 
 namespace Application.UseCases.AuthorUseCases;
 
 [Service]
-public class DeleteAuthorUseCase(IAuthorRepository authorRepository, DeleteBookByAuthorIdUseCase deleteBookByAuthorIdUseCase)
+public class DeleteAuthorUseCase(IAuthorRepository authorRepository, IBookRepository bookRepository)
 {
     public async Task<bool> InvokeAsync(Guid id)
     {
-        await deleteBookByAuthorIdUseCase.InvokeAsync(id);
-        var result = await authorRepository.DeleteAsync(id);
+        var authorToDelete = await authorRepository.GetByIdAsync(id);
+
+        if (authorToDelete is null)
+        {
+            return false;
+        }
+        
+        bookRepository.DeleteByAuthorId(id);
+        var result = authorRepository.Delete(authorToDelete);
         await authorRepository.SaveChangesAsync();
         return result;
     }

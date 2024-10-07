@@ -13,7 +13,7 @@ public class CreateBookUseCase(IBookRepository bookRepository)
     {
         book.Available = true;
         var bookDbEntity = book.Adapt<Book>();
-        var createdBook = await bookRepository.CreateAsync(bookDbEntity);
+        var createdBook = bookRepository.Create(bookDbEntity);
         await bookRepository.SaveChangesAsync();
         return createdBook.Adapt<BookDto>();
     } 

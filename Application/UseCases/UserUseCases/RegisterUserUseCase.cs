@@ -16,7 +16,7 @@ public class RegisterUserUseCase(IUserRepository userRepository, ISecurity secur
         
         if (dbUser is not null)
         {
-            throw new LibraryApplicationException(HttpStatusCode.UnprocessableContent, "Account with this login already exist");
+            throw new LibraryApplicationException(ExceptionCode.ImpossibleData, "Account with this login already exist");
         }
         
         var passwordKeyAndHash = security.GeneratePasswordKeyAndHashFromString(registerRequest.Password);
@@ -30,7 +30,7 @@ public class RegisterUserUseCase(IUserRepository userRepository, ISecurity secur
             PasswordHash = passwordKeyAndHash.Value
         };
 
-        await userRepository.CreateAsync(user);
+        userRepository.Create(user);
         await userRepository.SaveChangesAsync();
         
         return true;

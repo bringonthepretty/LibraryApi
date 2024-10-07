@@ -1,35 +1,33 @@
 using System.Net;
 using Application.DependencyInjectionExtensions;
 using Application.Exceptions;
+using Domain.Abstractions;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.BookUseCases;
 
 [Service]
-public class BorrowBookUseCase(IHttpContextAccessor contextAccessor, UpdateBookUseCase updateBookUseCase, GetBookByIdUseCase getBookByIdUseCase)
+public class BorrowBookUseCase(IBookRepository bookRepository)
 {
-    public async Task<bool> InvokeAsync(Guid bookId)
+    public async Task<bool> InvokeAsync(Guid userId, Guid bookId)
     {
-        var currentUser = contextAccessor.HttpContext?.User;
-        var idClaim = currentUser?.Claims.FirstOrDefault(claim => claim.Type == "Id");
-        
-        if (idClaim is null)
+        var book = await bookRepository.GetByIdAsync(bookId);
+        if (book is null)
         {
-            throw new LibraryApplicationException(HttpStatusCode.Unauthorized, "User is not authenticated");
+            throw new LibraryApplicationException(ExceptionCode.EntityDoesNotExists, "Book does not exists");
         }
-
-        var book = await getBookByIdUseCase.InvokeAsync(bookId);
 
         if (!book.Available)
         {
-            throw new LibraryApplicationException(HttpStatusCode.UnprocessableContent, "Book already taken");
+            throw new LibraryApplicationException(ExceptionCode.ImpossibleData, "Book already taken");
         }
 
         book.Available = false;
-        book.BorrowedByUserId = Guid.Parse(idClaim.Value);
+        book.BorrowedByUserId = userId;
         book.BorrowTime = DateTime.Now.AddDays(7);
 
-        await updateBookUseCase.InvokeAsync(book);
+        bookRepository.Update(book);
+        await bookRepository.SaveChangesAsync();
         
         return true;
     }

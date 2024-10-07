@@ -16,7 +16,7 @@ public class GetBookByIsbnUseCase(IBookRepository bookRepository)
 
         if (result is null)
         {
-            throw new LibraryApplicationException(HttpStatusCode.NotFound, "There is no book with given isbn");
+            throw new LibraryApplicationException(ExceptionCode.EntityDoesNotExists, "There is no book with given isbn");
         }
 
         return result.Adapt<BookDto>();

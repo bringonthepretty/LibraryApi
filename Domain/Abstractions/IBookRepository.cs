@@ -2,10 +2,8 @@ using Domain.Entities;
 
 namespace Domain.Abstractions;
 
-public interface IBookRepository: IUnitOfWork
+public interface IBookRepository: IBaseRepository<Book>
 {
-    public Task<Book> CreateAsync(Book book);
-    public Task<Book?> GetByIdAsync(Guid id);
     public Task<Book?> GetByIsbnAsync(string isbn);
     public Task<Book?> GetByExactNameAsync(string name);
     public Task<List<Book>> GetAllAsync();
@@ -19,12 +17,8 @@ public interface IBookRepository: IUnitOfWork
     public Task<List<Book>> GetAllByUserIdWithOffsetAndLimitAsync(Guid userId, int offset, int limit);
     public Task<List<Book>> GetAllByNamePartWithOffsetAndLimitAsync(string namePart, int offset, int limit);
     public Task<List<Book>> GetAllByGenreWithOffsetAndLimitAsync(string genre, int offset, int limit);
-    public Task<Book> UpdateAsync(Book book);
-    public Task<bool> DeleteAsync(Guid id);
 
-    public Task<int> DeleteByAuthorIdAsync(Guid authorId);
-
-    public Task<int> CountAllAsync();
+    public int DeleteByAuthorId(Guid authorId);
     public Task<int> CountAllWithNamePartAsync(string namePart);
     public Task<int> CountAllWithAuthorIdAsync(Guid authorId);
     public Task<int> CountAllWithUserIdAsync(Guid userId);

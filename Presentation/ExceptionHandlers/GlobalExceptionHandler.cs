@@ -13,13 +13,20 @@ public class GlobalExceptionHandler : IExceptionHandler
         var problemDetails = new ProblemDetails();
         if (exception is LibraryApplicationException applicationException)
         {
-            problemDetails.Status = (int)applicationException.HttpCode;
-            problemDetails.Title = applicationException.HttpCode.ToString();
+            problemDetails.Status = applicationException.ExceptionCode switch
+            {
+                ExceptionCode.EntityDoesNotExists => StatusCodes.Status404NotFound,
+                ExceptionCode.ImpossibleData => StatusCodes.Status422UnprocessableEntity,
+                ExceptionCode.SecurityError => StatusCodes.Status401Unauthorized,
+                _ => StatusCodes.Status400BadRequest
+            };
+
+            problemDetails.Title = applicationException.ExceptionCode.ToString();
             problemDetails.Detail = string.Join(". ", applicationException.ExceptionMessages);
         }
         else
         {
-            problemDetails.Status = (int)HttpStatusCode.InternalServerError;
+            problemDetails.Status = StatusCodes.Status500InternalServerError;
             problemDetails.Title = HttpStatusCode.InternalServerError.ToString();
             problemDetails.Detail = "Unknown error";
         }

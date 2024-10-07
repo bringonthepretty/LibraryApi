@@ -6,23 +6,29 @@ public class LibraryApplicationException : Exception
 {
 
     public List<string> ExceptionMessages { get; } = [];
-    public HttpStatusCode HttpCode { get; }
+    public ExceptionCode ExceptionCode { get; }
     
-    public LibraryApplicationException(HttpStatusCode httpCode)
+    public LibraryApplicationException(ExceptionCode exceptionCode)
     {
-        HttpCode = httpCode;
+        ExceptionCode = exceptionCode;
     }
-
-    public LibraryApplicationException(HttpStatusCode httpCode, string message)
+    
+    public LibraryApplicationException(string message)
         : base(message)
     {
-        HttpCode = httpCode;
+        ExceptionMessages.Add(message);   
+    }
+
+    public LibraryApplicationException(ExceptionCode exceptionCode, string message)
+        : base(message)
+    {
+        ExceptionCode = exceptionCode;
         ExceptionMessages.Add(message);   
     }
     
-    public LibraryApplicationException(HttpStatusCode httpCode, List<string> messages)
+    public LibraryApplicationException(ExceptionCode exceptionCode, List<string> messages)
     {
-        HttpCode = httpCode;
+        ExceptionCode = exceptionCode;
         ExceptionMessages.AddRange(messages);
     } 
 }

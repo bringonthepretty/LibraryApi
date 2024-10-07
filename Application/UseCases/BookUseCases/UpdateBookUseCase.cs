@@ -11,8 +11,12 @@ public class UpdateBookUseCase(IBookRepository bookRepository)
 {
     public async Task<BookDto> InvokeAsync(BookDto book)
     {
+        if (await bookRepository.IsExistsWithIdAsync(book.Id))
+        {
+            throw new ApplicationException();
+        }
         var bookDbEntity = book.Adapt<Book>();
-        var updatedBook = await bookRepository.UpdateAsync(bookDbEntity);
+        var updatedBook = bookRepository.Update(bookDbEntity);
         await bookRepository.SaveChangesAsync();
         return updatedBook.Adapt<BookDto>();
     }

@@ -17,13 +17,13 @@ public class PageAndLimitValidator: IPageAndLimitValidator
         if (!pageParseResult)
         {
             exceptionMessagesList.Add("Page must be valid int");
-            throw new LibraryApplicationException(HttpStatusCode.UnprocessableContent, exceptionMessagesList);
+            throw new LibraryApplicationException(ExceptionCode.ImpossibleData, exceptionMessagesList);
         }
 
         if (intPage < 1)
         {
             exceptionMessagesList.Add("Page cannot be less than one");
-            throw new LibraryApplicationException(HttpStatusCode.UnprocessableContent, exceptionMessagesList);
+            throw new LibraryApplicationException(ExceptionCode.ImpossibleData, exceptionMessagesList);
         }
     }
 
@@ -35,12 +35,12 @@ public class PageAndLimitValidator: IPageAndLimitValidator
         
         if (!limitParseResult)
         {
-            throw new LibraryApplicationException(HttpStatusCode.UnprocessableContent, exceptionMessagesList);
+            throw new LibraryApplicationException(ExceptionCode.ImpossibleData, exceptionMessagesList);
         }
 
         if (intLimit < 1)
         {
-            throw new LibraryApplicationException(HttpStatusCode.UnprocessableContent, exceptionMessagesList);
+            throw new LibraryApplicationException(ExceptionCode.ImpossibleData, exceptionMessagesList);
         }
     }
 

@@ -4,6 +4,7 @@ using Application.Dtos;
 using Application.Exceptions;
 using Domain.Abstractions;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.BookUseCases;
 
@@ -16,7 +17,7 @@ public class GetBookByIdUseCase(IBookRepository bookRepository)
 
         if (result is null)
         {
-            throw new LibraryApplicationException(HttpStatusCode.NotFound, "There is no book with given id");
+            throw new LibraryApplicationException(ExceptionCode.EntityDoesNotExists, "There is no book with given id");
         }
 
         return result.Adapt<BookDto>();

@@ -1,4 +1,5 @@
 using Application.Dtos;
+using Application.Dtos.FilterMode;
 using Application.UseCases.BookUseCases;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +28,12 @@ public class BooksController(IPageAndLimitValidator pageAndLimitValidator, BookU
     public async Task<IActionResult> GetAllWithPageAndLimit(string page = "1", string limit = "10")
     {
         pageAndLimitValidator.ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
-        return Ok(await bookUseCases.GetAllBooksWithPageAndLimitUseCase.InvokeAsync(intPage, intLimit));
+        return Ok(await bookUseCases.GetAllBooksUseCase.InvokeAsync(new GetAllBooksCriteriaDto
+        (
+            new BlankFilter(),
+            intPage,
+            intLimit
+        )));
     }
 
     [HttpPost]
@@ -54,19 +60,19 @@ public class BooksController(IPageAndLimitValidator pageAndLimitValidator, BookU
         return Ok(await bookUseCases.DeleteBookUseCase.InvokeAsync(id));
     }
     
-    [HttpGet("{id:guid}/borrow")]
+    [HttpGet("{bookId:guid}/borrow")]
     [Authorize(Policy = "Authenticated")]
-    public async Task<IActionResult> BorrowBook(Guid id)
+    public async Task<IActionResult> BorrowBook(Guid bookId, Guid userId)
     {
-        var result = await bookUseCases.BorrowBookUseCase.InvokeAsync(id);
+        var result = await bookUseCases.BorrowBookUseCase.InvokeAsync(userId, bookId);
         return Ok(result);
     }
     
-    [HttpGet("{id:guid}/return")]
+    [HttpGet("{bookId:guid}/return")]
     [Authorize(Policy = "Authenticated")]
-    public async Task<IActionResult> ReturnBook(Guid id)
+    public async Task<IActionResult> ReturnBook(Guid bookId, Guid userId)
     {
-        var result = await bookUseCases.ReturnBookUseCase.InvokeAsync(id);
+        var result = await bookUseCases.ReturnBookUseCase.InvokeAsync(userId, bookId);
         return Ok(result);
     }
 
@@ -74,48 +80,79 @@ public class BooksController(IPageAndLimitValidator pageAndLimitValidator, BookU
     public async Task<IActionResult> GetAllByNameWithPageAndLimit(string name, string page = "1", string limit = "10")
     {
         pageAndLimitValidator.ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
-        return Ok(await bookUseCases.GetAllBooksByNameWithPageAndLimitUseCase.InvokeAsync(name, intPage, intLimit));
+        return Ok(await bookUseCases.GetAllBooksUseCase.InvokeAsync(new GetAllBooksCriteriaDto
+        (
+            new ByName(name),
+            intPage,
+            intLimit
+        )));
     }
     
     [HttpGet("byGenre")]
     public async Task<IActionResult> GetAllByGenreWithPageAndLimit(string genre, string page = "1", string limit = "10")
     {
         pageAndLimitValidator.ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
-        return Ok(await bookUseCases.GetAllBooksByGenreWithPageAndLimitUseCase.InvokeAsync(genre, intPage, intLimit));
+        return Ok(await bookUseCases.GetAllBooksUseCase.InvokeAsync(new GetAllBooksCriteriaDto
+        (
+            new ByGenre(genre),
+            intPage,
+            intLimit
+        )));
     }
     
     [HttpGet("byAuthor")]
     public async Task<IActionResult> GetAllByAuthorWithPageAndLimit(Guid authorId, string page = "1", string limit = "10")
     {
         pageAndLimitValidator.ValidatePageAndLimit(page, limit, out var intPage, out var intLimit);
-        return Ok(await bookUseCases.GetAllBooksByAuthorWithPageAndLimitUseCase.InvokeAsync(authorId, intPage, intLimit));
+        return Ok(await bookUseCases.GetAllBooksUseCase.InvokeAsync(new GetAllBooksCriteriaDto
+        (
+            new ByAuthorId(authorId),
+            intPage,
+            intLimit
+        )));
     }
     
     [HttpGet("pagescount")]
     public async Task<IActionResult> GetAllBooksPagesCount(string limit = "10")
     {
         pageAndLimitValidator.ValidateLimit(limit, out var intLimit);
-        return Ok(await bookUseCases.GetAllBooksPagesCountUseCase.InvokeAsync(intLimit));
+        return Ok(await bookUseCases.GetAllBooksPagesCountUseCase.InvokeAsync(new GetAllBooksPageCountCriteriaDto
+        (
+            new BlankFilter(),
+            intLimit
+        )));
     }
 
     [HttpGet("pagescountbyname")]
     public async Task<IActionResult> GetAllBooksWithNamePagesCount(string name, string limit = "10")
     {
         pageAndLimitValidator.ValidateLimit(limit, out var intLimit);
-        return Ok(await bookUseCases.GetAllBooksWithNamePagesCountUseCase.InvokeAsync(name, intLimit));
+        return Ok(await bookUseCases.GetAllBooksPagesCountUseCase.InvokeAsync(new GetAllBooksPageCountCriteriaDto
+        (
+            new ByName(name),
+            intLimit
+        )));
     }
     
     [HttpGet("pagescountbygenre")]
     public async Task<IActionResult> GetAllBooksWithGenrePagesCount(string genre, string limit = "10")
     {
         pageAndLimitValidator.ValidateLimit(limit, out var intLimit);
-        return Ok(await bookUseCases.GetAllBooksWithGenrePagesCountUseCase.InvokeAsync(genre, intLimit));
+        return Ok(await bookUseCases.GetAllBooksPagesCountUseCase.InvokeAsync(new GetAllBooksPageCountCriteriaDto
+        (
+            new ByGenre(genre),
+            intLimit
+        )));
     }
     
     [HttpGet("pagescountbyauthor")]
     public async Task<IActionResult> GetAllBooksWithAuthorPagesCount(Guid id, string limit = "10")
     {
         pageAndLimitValidator.ValidateLimit(limit, out var intLimit);
-        return Ok(await bookUseCases.GetAllBooksWithAuthorIdPagesCountUseCase.InvokeAsync(id, intLimit));
+        return Ok(await bookUseCases.GetAllBooksPagesCountUseCase.InvokeAsync(new GetAllBooksPageCountCriteriaDto
+        (
+            new ByAuthorId(id),
+            intLimit
+        )));
     }
 }

@@ -1,28 +1,25 @@
 using System.Net;
 using Application.DependencyInjectionExtensions;
 using Application.Exceptions;
+using Domain.Abstractions;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.BookUseCases;
 
 [Service]
-public class ReturnBookUseCase(IHttpContextAccessor contextAccessor, UpdateBookUseCase updateBookUseCase, GetBookByIdUseCase getBookByIdUseCase)
+public class ReturnBookUseCase(IBookRepository bookRepository)
 {
-    public async Task<bool> InvokeAsync(Guid bookId)
+    public async Task<bool> InvokeAsync(Guid userId, Guid bookId)
     {
-        var currentUser = contextAccessor.HttpContext?.User;
-        var idClaim = currentUser?.Claims.FirstOrDefault(claim => claim.Type == "Id");
-        
-        if (idClaim is null)
+        var book = await bookRepository.GetByIdAsync(bookId);
+        if (book is null)
         {
-            throw new LibraryApplicationException(HttpStatusCode.Unauthorized, "User is not authenticated");
+            throw new LibraryApplicationException(ExceptionCode.EntityDoesNotExists, "Book with provided id does not exusts");
         }
-        
-        var book = await getBookByIdUseCase.InvokeAsync(bookId);
 
-        if (book.BorrowedByUserId != Guid.Parse(idClaim.Value))
+        if (book.BorrowedByUserId != userId)
         {
-            throw new LibraryApplicationException(HttpStatusCode.Forbidden, "User does not own this book");
+            throw new LibraryApplicationException(ExceptionCode.SecurityError, "User does not own this book");
         }
         
         if (book.Available)
@@ -34,8 +31,9 @@ public class ReturnBookUseCase(IHttpContextAccessor contextAccessor, UpdateBookU
         book.BorrowedByUserId = null;
         book.BorrowTime = null;
 
-        await updateBookUseCase.InvokeAsync(book);
-
+        bookRepository.Update(book);
+        await bookRepository.SaveChangesAsync();
+        
         return true;
     }
 }
