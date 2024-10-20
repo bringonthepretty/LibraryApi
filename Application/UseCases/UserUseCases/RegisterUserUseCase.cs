@@ -10,7 +10,7 @@ namespace Application.UseCases.UserUseCases;
 [Service]
 public class RegisterUserUseCase(IUserRepository userRepository, ISecurity security)
 {
-    public async Task<bool> InvokeAsync(RegisterRequestDto registerRequest)
+    public async Task InvokeAsync(RegisterRequestDto registerRequest)
     {
         var dbUser = await userRepository.GetByLoginAsync(registerRequest.Login);
         
@@ -32,7 +32,5 @@ public class RegisterUserUseCase(IUserRepository userRepository, ISecurity secur
 
         userRepository.Create(user);
         await userRepository.SaveChangesAsync();
-        
-        return true;
     }
 }

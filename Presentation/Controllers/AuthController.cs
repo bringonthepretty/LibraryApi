@@ -15,15 +15,8 @@ public class AuthController(UserUseCases userUseCases) : ApiController
     public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
     {
         
-        var result = await userUseCases.RegisterUserUseCase.InvokeAsync(registerRequest.Adapt<RegisterRequestDto>());
-        if (result)
-        {
-            return Ok();
-        }
-        else
-        {
-            return BadRequest();
-        }
+        await userUseCases.RegisterUserUseCase.InvokeAsync(registerRequest.Adapt<RegisterRequestDto>());
+        return Ok();
     }
 
     [HttpPost("login")]

@@ -17,7 +17,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             {
                 ExceptionCode.EntityDoesNotExists => StatusCodes.Status404NotFound,
                 ExceptionCode.ImpossibleData => StatusCodes.Status422UnprocessableEntity,
-                ExceptionCode.SecurityError => StatusCodes.Status401Unauthorized,
+                ExceptionCode.AuthenticationError => StatusCodes.Status401Unauthorized,
                 _ => StatusCodes.Status400BadRequest
             };
 

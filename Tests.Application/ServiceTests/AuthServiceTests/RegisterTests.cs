@@ -15,7 +15,6 @@ public class RegisterTests
     public async Task RegisterTest_Positive_ReturnTrue()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
-        var configurationMock = new Mock<IConfiguration>();
         var securityMock = new Mock<ISecurity>();
         var registerRequestDto = new RegisterRequestDto()
         {
@@ -27,16 +26,13 @@ public class RegisterTests
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync("")).ReturnsAsync(user);
 
         var authService = new RegisterUserUseCase(userRepositoryMock.Object, securityMock.Object);
-        var result = await authService.InvokeAsync(registerRequestDto);
-        Assert.True(result);
-
+        await authService.InvokeAsync(registerRequestDto);
     }
     
     [Fact]
     public async Task RegisterTest_LoginAlreadyExists_Throws()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
-        var configurationMock = new Mock<IConfiguration>();
         var securityMock = new Mock<ISecurity>();
         var registerRequestDto = new RegisterRequestDto()
         {

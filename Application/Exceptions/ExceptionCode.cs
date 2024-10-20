@@ -4,6 +4,6 @@ public enum ExceptionCode
 {
     EntityDoesNotExists,
     ImpossibleData,
-    SecurityError,
+    AuthenticationError,
     UnknownError
 }

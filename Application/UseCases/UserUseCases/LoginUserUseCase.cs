@@ -16,12 +16,12 @@ public class LoginUserUseCase(IUserRepository userRepository, ISecurity security
         
         if (dbUser is null)
         {
-            throw new LibraryApplicationException(ExceptionCode.SecurityError, "Wrong login or password");
+            throw new LibraryApplicationException(ExceptionCode.AuthenticationError, "Wrong login or password");
         }
         
         if (!security.CheckIsPasswordCorrect(dbUser, password))
         {
-            throw new LibraryApplicationException(ExceptionCode.SecurityError, "Wrong login or password");
+            throw new LibraryApplicationException(ExceptionCode.AuthenticationError, "Wrong login or password");
         }
 
         var encryptedAccessToken = security.GenerateEncryptedAccessToken(dbUser, configuration["JwtSecurityKey"]!);

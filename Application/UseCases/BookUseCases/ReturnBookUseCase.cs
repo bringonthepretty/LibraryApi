@@ -19,7 +19,7 @@ public class ReturnBookUseCase(IBookRepository bookRepository)
 
         if (book.BorrowedByUserId != userId)
         {
-            throw new LibraryApplicationException(ExceptionCode.SecurityError, "User does not own this book");
+            throw new LibraryApplicationException(ExceptionCode.AuthenticationError, "User does not own this book");
         }
         
         if (book.Available)
