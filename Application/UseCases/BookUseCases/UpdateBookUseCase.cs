@@ -1,5 +1,6 @@
 using Application.DependencyInjectionExtensions;
 using Application.Dtos;
+using Application.Exceptions;
 using Domain.Abstractions;
 using Domain.Entities;
 using Mapster;
@@ -13,7 +14,7 @@ public class UpdateBookUseCase(IBookRepository bookRepository)
     {
         if (await bookRepository.IsExistsWithIdAsync(book.Id))
         {
-            throw new ApplicationException();
+            throw new LibraryApplicationException(ExceptionCode.EntityDoesNotExists, "Book does not exists");
         }
         var bookDbEntity = book.Adapt<Book>();
         var updatedBook = bookRepository.Update(bookDbEntity);

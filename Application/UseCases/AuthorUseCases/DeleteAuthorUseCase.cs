@@ -1,4 +1,5 @@
 using Application.DependencyInjectionExtensions;
+using Application.Exceptions;
 using Domain.Abstractions;
 
 namespace Application.UseCases.AuthorUseCases;
@@ -12,7 +13,7 @@ public class DeleteAuthorUseCase(IAuthorRepository authorRepository, IBookReposi
 
         if (authorToDelete is null)
         {
-            return false;
+            throw new LibraryApplicationException(ExceptionCode.EntityDoesNotExists, "Author does not exists");
         }
         
         bookRepository.DeleteByAuthorId(id);
