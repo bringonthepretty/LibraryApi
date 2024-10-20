@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Application.Exceptions;
+using Application.Requests.Implementations.UserRequests;
 using Application.UseCases.UserUseCases;
 using Domain.Abstractions;
 using Domain.Entities;
@@ -47,7 +48,7 @@ public class RegenerateTokensTests
 
         var authService = new RegenerateUserAccessAndRefreshTokensUseCase(userRepositoryMock.Object, securityMock.Object, configurationMock.Object);
         
-        var result = await authService.InvokeAsync(oldRefreshToken);
+        var result = await authService.InvokeAsync(new RegenerateUserAccessAndRefreshTokensRequest(oldRefreshToken, null));
         Assert.Equal(id, result.Id);
     }
     
@@ -66,7 +67,7 @@ public class RegenerateTokensTests
 
         var authService = new RegenerateUserAccessAndRefreshTokensUseCase(userRepositoryMock.Object, securityMock.Object, configurationMock.Object);
         
-        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(oldRefreshToken));
+        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(new RegenerateUserAccessAndRefreshTokensRequest(oldRefreshToken, null)));
     }
     
     [Fact]
@@ -79,6 +80,6 @@ public class RegenerateTokensTests
 
         var authService = new RegenerateUserAccessAndRefreshTokensUseCase(userRepositoryMock.Object, securityMock.Object, configurationMock.Object);
         
-        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(oldRefreshToken));
+        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(new RegenerateUserAccessAndRefreshTokensRequest(oldRefreshToken, null)));
     }
 }

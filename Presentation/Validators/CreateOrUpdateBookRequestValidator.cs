@@ -5,7 +5,7 @@ using Presentation.Requests;
 namespace Presentation.Validators;
 
 [Service]
-public class CreateOrUpdateBookRequestValidator: BaseValidator<CreateOrUpdateBookRequest>
+public class CreateOrUpdateBookRequestValidator: BaseValidator<CreateOrUpdateBookWebRequest>
 {
     public CreateOrUpdateBookRequestValidator()
     {

@@ -6,7 +6,7 @@ namespace Presentation.Validators;
 using FluentValidation;
 
 [Service]
-public class CreateOrUpdateAuthorRequestValidator: BaseValidator<CreateOrUpdateAuthorRequest>
+public class CreateOrUpdateAuthorRequestValidator: BaseValidator<CreateOrUpdateAuthorWebRequest>
 {
     public CreateOrUpdateAuthorRequestValidator()
     {

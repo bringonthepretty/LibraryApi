@@ -1,5 +1,6 @@
 using Application.DependencyInjectionExtensions;
 using Application.Exceptions;
+using Application.Requests.Implementations.BookRequests;
 using Domain.Abstractions;
 
 namespace Application.UseCases.BookUseCases;
@@ -7,9 +8,9 @@ namespace Application.UseCases.BookUseCases;
 [Service]
 public class DeleteBookUseCase(IBookRepository bookRepository)
 {
-    public async Task<bool> InvokeAsync(Guid id)
+    public async Task<bool> InvokeAsync(DeleteBookRequest request)
     {
-        var bookToDelete = await bookRepository.GetByIdAsync(id);
+        var bookToDelete = await bookRepository.GetByIdAsync(request.Id);
 
         if (bookToDelete is null)
         {

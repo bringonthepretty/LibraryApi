@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Application.Exceptions;
+using Application.Requests.Implementations.UserRequests;
 using Application.UseCases.UserUseCases;
 using Domain.Abstractions;
 using Domain.Entities;
@@ -42,7 +43,7 @@ public class LoginTests
         configurationMock.Setup(configuration => configuration["JwtSecurityKey"]).Returns("jwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityley");
 
         var authService = new LoginUserUseCase(userRepositoryMock.Object, securityMock.Object, configurationMock.Object);
-        var result = await authService.InvokeAsync(login, password);
+        var result = await authService.InvokeAsync(new LoginUserRequest(login, password, null));
         Assert.Equal(id, result.Id);
     }
     
@@ -61,7 +62,7 @@ public class LoginTests
         configurationMock.Setup(configuration => configuration["JwtSecurityKey"]).Returns("jwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityley");
 
         var authService = new LoginUserUseCase(userRepositoryMock.Object, securityMock.Object, configurationMock.Object);
-        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(login, password));
+        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(new LoginUserRequest(login, password, null)));
     }
     
     [Fact]
@@ -95,6 +96,6 @@ public class LoginTests
         configurationMock.Setup(configuration => configuration["JwtSecurityKey"]).Returns("jwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityleyjwtsecurityley");
 
         var authService = new LoginUserUseCase(userRepositoryMock.Object, securityMock.Object, configurationMock.Object);
-        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(login, password + "asdasd"));
+        await Assert.ThrowsAsync<LibraryApplicationException>(async () => await authService.InvokeAsync(new LoginUserRequest(login, password + "asdasd", null)));
     }
 }

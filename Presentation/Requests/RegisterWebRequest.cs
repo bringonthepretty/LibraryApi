@@ -1,6 +1,6 @@
 namespace Presentation.Requests;
 
-public class RegisterRequest
+public class RegisterWebRequest
 {
     public string Username { get; set; }
     public string Login { get; set; }

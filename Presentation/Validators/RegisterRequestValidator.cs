@@ -5,7 +5,7 @@ using Presentation.Requests;
 namespace Presentation.Validators;
 
 [Service]
-public class RegisterRequestValidator: BaseValidator<RegisterRequest>
+public class RegisterRequestValidator: BaseValidator<RegisterWebRequest>
 {
     public RegisterRequestValidator()
     {

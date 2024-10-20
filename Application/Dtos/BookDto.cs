@@ -2,7 +2,6 @@ namespace Application.Dtos;
 
 public class BookDto : EntityDto
 {
-    public Guid Id { get; set; }
     public string Isbn { get; set; }
     public string Name { get; set; }
     public string Genre { get; set; }

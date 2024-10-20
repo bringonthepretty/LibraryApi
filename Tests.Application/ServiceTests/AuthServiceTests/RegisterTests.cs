@@ -1,5 +1,6 @@
 using Application.Dtos;
 using Application.Exceptions;
+using Application.Requests.Implementations.UserRequests;
 using Application.UseCases.UserUseCases;
 using Domain.Abstractions;
 using Domain.Entities;
@@ -16,12 +17,7 @@ public class RegisterTests
     {
         var userRepositoryMock = new Mock<IUserRepository>();
         var securityMock = new Mock<ISecurity>();
-        var registerRequestDto = new RegisterRequestDto()
-        {
-            Login = "login",
-            Password = "password",
-            Username = "password",
-        };
+        var registerRequestDto = new RegisterUserRequest("login", "password", "username");
         User? user = null;
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync("")).ReturnsAsync(user);
 
@@ -34,12 +30,7 @@ public class RegisterTests
     {
         var userRepositoryMock = new Mock<IUserRepository>();
         var securityMock = new Mock<ISecurity>();
-        var registerRequestDto = new RegisterRequestDto()
-        {
-            Login = "login",
-            Password = "password",
-            Username = "password",
-        };
+        var registerRequestDto = new RegisterUserRequest("login", "password", "username");
         var user = new User();
         userRepositoryMock.Setup(repository => repository.GetByLoginAsync(registerRequestDto.Login)).ReturnsAsync(user);
 

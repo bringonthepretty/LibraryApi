@@ -1,6 +1,6 @@
 namespace Presentation.Requests;
 
-public class CreateOrUpdateBookRequest
+public class CreateOrUpdateBookWebRequest
 {
     public string Isbn { get; set; }
     public string Name { get; set; }

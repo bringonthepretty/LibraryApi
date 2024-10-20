@@ -1,4 +1,6 @@
 using Application.Dtos;
+using Application.Requests.Implementations.UserRequests;
+using Application.UseCases.Boundaries;
 using Application.UseCases.UserUseCases;
 using Mapster;
 using Microsoft.AspNetCore.Http;
@@ -9,39 +11,27 @@ using Presentation.Views;
 namespace Presentation.Controllers;
 
 [Route("api/[controller]")]
-public class AuthController(UserUseCases userUseCases) : ApiController
+public class AuthController(Boundary boundary) : ApiController
 {
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
+    public async Task<IActionResult> Register([FromBody] RegisterWebRequest registerWebRequest)
     {
         
-        await userUseCases.RegisterUserUseCase.InvokeAsync(registerRequest.Adapt<RegisterRequestDto>());
+        await boundary.InvokeAsync(registerWebRequest.Adapt<RegisterUserRequest>());
         return Ok();
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+    public async Task<IActionResult> Login([FromBody] LoginWebRequest loginWebRequest)
     {
-        var result = await userUseCases.LoginUserUseCase.InvokeAsync(loginRequest.Login, loginRequest.Password);
-        Response.Cookies.Append("RefreshToken", result.RefreshToken, new CookieOptions(){HttpOnly = true, Secure = true});
-        return Ok(new LoginResponseView
-        {
-            Id = result.Id,
-            Token = result.AccessToken,
-            Role = result.Role
-        });
+        var result = await boundary.InvokeAsync(new LoginUserRequest(loginWebRequest.Login, loginWebRequest.Password, Response.Cookies));
+        return Ok(result);
     }
 
     [HttpGet("regenerateTokens")]
     public async Task<IActionResult> RegenerateTokens()
     {
-        var result = await userUseCases.RegenerateUserAccessAndRefreshTokensUseCase.InvokeAsync(Request.Cookies["RefreshToken"]);
-        Response.Cookies.Append("RefreshToken", result.RefreshToken, new CookieOptions(){HttpOnly = true, Secure = true});
-        return Ok(new LoginResponseView
-        {
-            Id = result.Id,
-            Token = result.AccessToken,
-            Role = result.Role
-        });
+        var result = await boundary.InvokeAsync(new RegenerateUserAccessAndRefreshTokensRequest(Request.Cookies["RefreshToken"], Response.Cookies));
+        return Ok(result);
     }
 }

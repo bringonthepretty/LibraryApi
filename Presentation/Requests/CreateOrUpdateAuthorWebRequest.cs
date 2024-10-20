@@ -1,6 +1,6 @@
 namespace Presentation.Requests;
 
-public class CreateOrUpdateAuthorRequest
+public class CreateOrUpdateAuthorWebRequest
 {
     public string Name { get; set; }
     public string Surname { get; set; }
