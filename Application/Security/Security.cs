@@ -7,7 +7,7 @@ using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Infrastructure.Security;
+namespace Application.Security;
 
 [Service()]
 public class Security : ISecurity
